@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Storage and Firestore Example</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+
+<!-- File Upload Section -->
+<div class="file-upload">
+  <input type="file" id="fileInput" />
+  <button id="uploadButton">Upload File</button>
+  <p id="fileMessage" class="message"></p>
+</div>
+
+<!-- Event Details Form -->
+<form id="eventForm" class="form">
+  <h1>Event Details</h1>
+  <label for="eventName">Event Name:</label>
+  <input type="text" id="eventName" name="eventName" required>
+
+  <label for="eventDate">Event Date:</label>
+  <input type="date" id="eventDate" name="eventDate" required>
+
+  <label for="eventDetails">Event Details:</label>
+  <textarea id="eventDetails" name="eventDetails" rows="4" required></textarea>
+
+  <!-- Added class selector for event details -->
+  <label for="classSelector">Select Class:</label>
+  <select id="classSelector">
+    <option value="mca1">MCA 1</option>
+    <option value="mca2">MCA 2</option>
+    <!-- Add more options for other classes if needed -->
+  </select>
+
+  <button type="submit">Submit Event Details</button>
+  <p id="eventMessage" class="message"></p>
+</form>
+
+<!-- Grades Form -->
+<form id="gradesForm" class="form">
+  <h1>Grades</h1>
+  <label for="studentName">Student Name:</label>
+  <input type="text" id="studentName" name="studentName" required>
+
+  <label for="rollNumber">Roll Number:</label>
+  <input type="text" id="rollNumber" name="rollNumber" required>
+
+  <label for="gradeMarks">Grade Marks:</label>
+  <input type="text" id="gradeMarks" name="gradeMarks" required>
+
+  <!-- Added class selector for grades -->
+  <label for="classSelectorGrades">Select Class:</label>
+  <select id="classSelectorGrades">
+    <option value="mca1">MCA 1</option>
+    <option value="mca2">MCA 2</option>
+    <!-- Add more options for other classes if needed -->
+  </select>
+
+  <button type="submit">Submit Grades</button>
+  <p id="gradesMessage" class="message"></p>
+</form>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>

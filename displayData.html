@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Activity Manager</title>
+    <link rel="stylesheet" type="text/css" href="styles1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Class Filter Section -->
+    <div class="filter-section">
+        <label for="classFilter">Select Class:</label>
+        <select id="classFilter" onchange="filterData()">
+            <option value="all">All</option>
+            <option value="mca1">MCA 1</option>
+            <option value="mca2">MCA 2</option>
+            <!-- Add more options for other classes if needed -->
+        </select>
+    </div>
+
+    <!-- Container for Three Columns -->
+    <div class="container">
+
+        <!-- Files Column -->
+        <div class="column" id="filesList">
+            <h3>Files</h3>
+            <ul>
+                <!-- File List will be populated here -->
+            </ul>
+            <div class="button-container">
+                <button class="button delete-button" onclick="handleDeleteSelected()">Delete Selected</button>
+            </div>
+        </div>
+
+        <!-- Events Column -->
+        <div class="column" id="eventsList">
+            <h3>Events</h3>
+            <ul>
+                <!-- Events List will be populated here -->
+            </ul>
+            <div class="button-container">
+                <button class="button delete-button" onclick="handleDeleteSelected()">Delete Selected</button>
+            </div>
+        </div>
+
+        <!-- Grades Column -->
+        <div class="column" id="gradesList">
+            <h3>Grades</h3>
+            <ul>
+                <!-- Grades List will be populated here -->
+            </ul>
+            <div class="button-container">
+                <button class="button delete-button" onclick="handleDeleteSelected()">Delete Selected</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="displayData.js"></script>
+
+</body>
+
+</html>

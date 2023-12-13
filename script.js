@@ -2,7 +2,12 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-storage.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc, doc
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD4mxtvbmVphOENTioDTKZeX_eAvGvKwM8",
@@ -27,11 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const eventMessage = document.getElementById('eventMessage');
   const gradesMessage = document.getElementById('gradesMessage');
   const fileMessage = document.getElementById('fileMessage');
-  const selectedClassInput = document.getElementById('classSelector'); // Updated ID
-  const selectedClassGradesInput = document.getElementById('classSelectorGrades');
+  const selectedClassInputFile = document.getElementById('classSelectorFile');
+  const selectedClassInputEvent = document.getElementById('classSelectorEvent');
+  const selectedClassInputGrades = document.getElementById('classSelectorGrades');
 
   uploadButton.addEventListener('click', () => {
-    const selectedClass = selectedClassInput.value;
+    const selectedClass = selectedClassInputFile.value;
     uploadFile(selectedClass)
       .then(() => {
         // Success
@@ -55,35 +61,39 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  eventForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const selectedClass = selectedClassInput.value;
-    submitEventForm(selectedClass)
-      .then(() => {
-        // Success
-        eventMessage.textContent = "Event details added successfully!";
-        eventMessage.classList.remove('error');
-        eventMessage.classList.add('success');
-        setTimeout(() => {
-          eventMessage.textContent = "";
-          eventMessage.classList.remove('success');
-        }, 3000);
-      })
-      .catch((error) => {
-        // Error
-        eventMessage.textContent = `Error: ${error.message}`;
-        eventMessage.classList.remove('success');
-        eventMessage.classList.add('error');
-        setTimeout(() => {
-          eventMessage.textContent = "";
+    eventForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const selectedClass = selectedClassInputEvent.value; // Make sure this value is set correctly
+      submitEventForm(selectedClass)
+        .then(() => {
+          // Success
+          eventMessage.textContent = "Event details added successfully!";
           eventMessage.classList.remove('error');
-        }, 3000);
-      });
-  });
+          eventMessage.classList.add('success');
+          setTimeout(() => {
+            eventMessage.textContent = "";
+            eventMessage.classList.remove('success');
+          }, 3000);
+        })
+        .catch((error) => {
+          // Error
+          eventMessage.textContent = `Error: ${error.message}`;
+          eventMessage.classList.remove('success');
+          eventMessage.classList.add('error');
+          setTimeout(() => {
+            eventMessage.textContent = "";
+            eventMessage.classList.remove('error');
+          }, 3000);
+        });
+     });
+    // else {
+  //   console.error("Element with ID 'classSelector' not found.");
+  // }
+
 
   gradesForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const selectedClass = selectedClassInput.value;
+    const selectedClass = selectedClassInputGrades.value;
     submitGradesForm(selectedClass)
       .then(() => {
         // Success
@@ -122,6 +132,20 @@ function uploadFile(selectedClass) {
       })
       .then((downloadURL) => {
         console.log('File available at', downloadURL);
+
+        // Use the file name as the custom document ID
+        const customDocId = file.name;
+
+        // Add file details to Firestore with custom document ID
+        return setDoc(doc(db, 'files', customDocId), {
+          fileName: file.name,
+          downloadURL: downloadURL,
+          class: selectedClass,
+          timestamp: new Date()
+        });
+      })
+      .then(() => {
+        console.log('File details added to Firestore with custom document ID');
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -134,29 +158,30 @@ function uploadFile(selectedClass) {
 }
 
 function submitEventForm(selectedClass) {
-  console.log("Selected Class:", selectedClass); // Add this line for debugging
-
   const eventName = document.getElementById('eventName').value;
   const eventDate = document.getElementById('eventDate').value;
   const eventDetails = document.getElementById('eventDetails').value;
 
-  if (selectedClass) {
-    return addDoc(collection(db, `events/`), {
+  if (selectedClass && eventName && eventDate) {
+    // Create a custom document ID based on event name and date
+    const customDocId = `${eventName}`;
+
+    return addDoc(collection(db, 'events'), {
       eventName: eventName,
       eventDate: eventDate,
       eventDetails: eventDetails,
       class: selectedClass
-    })
+    }, customDocId)
       .then(() => {
-        console.log("Event details added to Firestore");
+        console.log("Event details added to Firestore with custom document ID");
       })
       .catch((error) => {
         console.error("Error adding event details document: ", error);
         throw error;
       });
   } else {
-    console.error("Selected class is undefined or null");
-    return Promise.reject(new Error("Selected class is undefined or null"));
+    console.error("Selected class, event name, or event date is undefined or null");
+    return Promise.reject(new Error("Selected class, event name, or event date is undefined or null"));
   }
 }
 
@@ -165,17 +190,28 @@ function submitGradesForm(selectedClass) {
   const rollNumber = document.getElementById('rollNumber').value;
   const gradeMarks = document.getElementById('gradeMarks').value;
 
-  return addDoc(collection(db, `grades/`), {
-    studentName: studentName,
-    rollNumber: rollNumber,
-    gradeMarks: gradeMarks,
-    class: selectedClass
-  })
-    .then(() => {
-      console.log("Grades added to Firestore");
+  if (selectedClass && studentName) {
+    // Create a custom document ID based on student name and class
+    const customDocId = `${studentName}_${selectedClass}`;
+
+    const gradesCollectionRef = collection(db, 'grades');
+    const customDocRef = doc(gradesCollectionRef, customDocId);
+
+    return setDoc(customDocRef, {
+      studentName: studentName,
+      rollNumber: rollNumber,
+      gradeMarks: gradeMarks,
+      class: selectedClass
     })
-    .catch((error) => {
-      console.error("Error adding grades document: ", error);
-      throw error;
-    });
+      .then(() => {
+        console.log("Grades added to Firestore with custom document ID");
+      })
+      .catch((error) => {
+        console.error("Error adding grades document: ", error);
+        throw error;
+      });
+  } else {
+    console.error("Selected class or student name is undefined or null");
+    return Promise.reject(new Error("Selected class or student name is undefined or null"));
+  }
 }

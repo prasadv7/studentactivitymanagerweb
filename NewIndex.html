@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firebase Storage and Firestore Example</title>
+  <title>Teacher's Dashboard</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
@@ -13,6 +13,12 @@
   <input type="file" id="fileInput" />
   <button id="uploadButton">Upload File</button>
   <p id="fileMessage" class="message"></p>
+  <label for="classSelectorFile">Select Class for File Upload:</label>
+<select id="classSelectorFile">
+  <option value="mca1">MCA 1</option>
+  <option value="mca2">MCA 2</option>
+  <!-- Add more options for other classes if needed -->
+</select>
 </div>
 
 <!-- Event Details Form -->
@@ -28,8 +34,8 @@
   <textarea id="eventDetails" name="eventDetails" rows="4" required></textarea>
 
   <!-- Added class selector for event details -->
-  <label for="classSelector">Select Class:</label>
-  <select id="classSelector">
+  <label for="classSelectorEvent">Select Class:</label>
+  <select id="classSelectorEvent">
     <option value="mca1">MCA 1</option>
     <option value="mca2">MCA 2</option>
     <!-- Add more options for other classes if needed -->
